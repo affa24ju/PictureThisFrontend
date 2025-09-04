@@ -1,3 +1,4 @@
+import RegistreraDialog from "../components/RegistreraDialog";
 
 export default function HomePage() {
   return (
@@ -19,8 +20,9 @@ export default function HomePage() {
             </p>
             
             {/* Här inne i div:en ska lägga till 'registrera' & 'login' */}
-            <div>
-
+            <div className="flex gap-4 justify-center mt-6">
+                <RegistreraDialog />
+                {/* Login komponent kommer här sen */}
             </div>
 
         </div>
