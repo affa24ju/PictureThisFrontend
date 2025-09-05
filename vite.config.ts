@@ -7,6 +7,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   define:{
-    global:"window",
+    global:"window", // För att få socketJson att funka med Vite
   }
 })
