@@ -12,13 +12,18 @@ export default function LoginDialog() {
                 <Dialog.Portal>
                     <Dialog.Overlay className="fixed inset-0 bg-black/40" />
                     <Dialog.Content className="fixed top-1/2 left-1/2 w-96 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-2xl shadow-xl">
+                        
+                        {/* Rubrik */}
                         <Dialog.Title className="text-xl font-bold mb-4">Logga in</Dialog.Title>
-                        <Dialog.Description className="text-sm text-gray-600 mb-4">
+                        
+                        {/* Beskrivningstext under rubriken */}
+                        <Dialog.Description className="text-lg text-gray-600 mb-4">
                             Ange dina inloggningsuppgifter för att fortsätta. <br />
                             Om du inte har ett konto, registrera dig först! 
                             Registrering tar mindre än en minut! 😉
                         </Dialog.Description>
 
+                        {/* Formulär för att ta emot userName & password */}
                         <form className="flex flex-col gap-3"
                             onSubmit={(e) => {
                                 e.preventDefault();
@@ -33,6 +38,7 @@ export default function LoginDialog() {
                             </button>
                         </form>
 
+                            {/* Stänger rutan  */}
                         <Dialog.Close asChild>
                             <button className="absolute top-3 right-3 text-gray-500 hover:text-gray-800">
                                 X

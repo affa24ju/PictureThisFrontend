@@ -30,7 +30,7 @@ export default function RegistreraDialog() {
                         <Dialog.Title className="text-xl font-bold mb-4">Registrera dig!</Dialog.Title>
 
                         {/* Texter som visas under rubriken. */}
-                        <Dialog.Description className="text-sm text-gray-600 mb-4">
+                        <Dialog.Description className="text-lg text-gray-600 mb-4">
                             Skapa ett konto för att börja spela! Det tar mindre än en minut. Lovar!😉
                         </Dialog.Description>
 
