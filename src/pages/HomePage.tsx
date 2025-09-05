@@ -1,4 +1,5 @@
 import RegistreraDialog from "../components/RegistreraDialog";
+import LoginDialog from "../components/LoginDialog";
 
 export default function HomePage() {
   return (
@@ -23,6 +24,7 @@ export default function HomePage() {
             <div className="flex gap-4 justify-center mt-6">
                 <RegistreraDialog />
                 {/* Login komponent kommer här sen */}
+                <LoginDialog />
             </div>
 
         </div>
