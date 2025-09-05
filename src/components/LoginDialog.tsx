@@ -25,15 +25,16 @@ export default function LoginDialog() {
 
                         {/* Formulär för att ta emot userName & password */}
                         <form className="flex flex-col gap-3"
+                            id="loginForm"
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 // TODO: Ska lägga till inloggningslogik här
                                 alert('Oj! Vänta... Jag måste hitta min inloggningslogik först! Återkommer snart!');
                             }}    
                         >
-                            <input type="text" placeholder="Användarnamn" className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                            <input type="password" placeholder="Password" className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                            <button type='submit' className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                            <input type="text" id="userName" placeholder="Användarnamn" className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                            <input type="password" id="password" placeholder="Password" className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                            <button type='submit' id="loginBtn" className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
                                 Logga in & fortsätt!!
                             </button>
                         </form>
