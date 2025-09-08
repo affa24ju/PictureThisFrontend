@@ -1,7 +1,7 @@
 import { useChatClient } from "../utils/UseChatClient";
 import { TextArea } from "@radix-ui/themes";
 import "../css/ChatMessageCss.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function ChatMessage() {
   const { messages, sendMessage } = useChatClient();
