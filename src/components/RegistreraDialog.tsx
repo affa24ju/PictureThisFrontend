@@ -30,20 +30,21 @@ export default function RegistreraDialog() {
                         <Dialog.Title className="text-xl font-bold mb-4">Registrera dig!</Dialog.Title>
 
                         {/* Texter som visas under rubriken. */}
-                        <Dialog.Description className="text-sm text-gray-600 mb-4">
+                        <Dialog.Description className="text-lg text-gray-600 mb-4">
                             Skapa ett konto för att börja spela! Det tar mindre än en minut. Lovar!😉
                         </Dialog.Description>
 
                         <form className="flex flex-col gap-3"
+                            id="registerForm"
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 // TODO: Ska lägga till registreringslogik här
                                 alert('Registrering lyckades! (inte riktigt...Skojar bara!!)');
                             }}
                         >
-                            <input type="text" placeholder="Användarnamn" className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required />
-                            <input type="password" placeholder="Password" className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required />
-                            <button type='submit' className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            <input type="text" id="userName" placeholder="Användarnamn" className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+                            <input type="password" id="password" placeholder="Password" className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+                            <button type='submit' id="registerBtn" className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                                 Skapa konto & kör igång!
                             </button>
                         </form>
