@@ -14,6 +14,7 @@ export const StompClient = new Client({
     reconnectDelay: 5000,
     //hur den skapar transporten och skapar en StockJS instans mot backend
     webSocketFactory: () => {
-        return new SockJS(`http://localhost:8080/ws`);
+        return new SockJS(`http://localhost:8080/ws?user=${JSON.parse(localStorage.getItem("currentUser") || "{}")}`);
     }
 })
+

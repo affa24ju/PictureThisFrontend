@@ -17,7 +17,7 @@ export function useChatClient() {
 
   const subscribe = () => {
     if (!subscription) {
-      subscription = StompClient.subscribe("/topic/messages", (msg) => {
+      subscription = StompClient.subscribe("/user/queue/game-state", (msg) => {
         const chat = JSON.parse(msg.body);
         setMessages((prev) => [...prev, chat]);
       });
