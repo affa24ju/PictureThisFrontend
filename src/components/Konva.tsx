@@ -1,105 +1,149 @@
-// import React, { useEffect, useState } from "react";
-// import { Stage, Layer, Line, Text } from "react-konva";
-// import { useClient } from "../utils/UseClient";
+import React, { useRef, useState } from "react";
+import { Stage, Layer, Line, Text } from "react-konva";
+import { ColoprPicker } from "./ColorPicker";
 
-const App = () => {
-  //   const [tool, setTool] = React.useState("pen");
-  //   type LineType = {
-  //     points: number[];
-  //     tool: string;
-  //   };
-  //   const isDrawing = React.useRef(false);
-  //   useEffect(()=>{
-  //   },[])
-  //   const handleMouseDown = (e: any) => {
-  //     if (!isDrawer) return;
-  //     isDrawing.current = true;
-  //     const pos = e.target.getStage().getPointerPosition();
-  //     const newLine = { tool, points: [pos.x, pos.y] };
-  //     setLines([...lines, newLine]);
-  //   };
-  //   const handleMouseMove = (e: any) => {
-  //     if (!isDrawer || !isDrawing.current) return;
-  //     const stage = e.target.getStage();
-  //     const point = stage.getPointerPosition();
-  //     let lastLine = lines[lines.length - 1];
-  //     lastLine = {
-  //       ...lastLine,
-  //       points: lastLine.points.concat([point.x, point.y]),
-  //     };
-  //     const updatedLines = lines.slice(0, lines.length - 1).concat(lastLine);
-  //     setLines(updatedLines);
-  //   };
-  //   const handleMouseUp = () => {
-  //     if (!isDrawer) return;
-  //     isDrawing.current = false;
-  //   };
-  //   const handleBecomeDrawer = () => {
-  //     setIsDrawer(true);
-  //     setLines([]);
-  //   };
-  //   const handleBecomeViewer = () => {
-  //     setIsDrawer(false);
-  //     setLines([]);
-  //   };
-  //   return (
-  //     <div>
-  //       <div style={{ marginBottom: 10 }}>
-  //         <button
-  //           onClick={handleBecomeDrawer}
-  //           disabled={isDrawer}
-  //           style={{ marginRight: 5 }}
-  //         >
-  //           Ritare
-  //         </button>
-  //         <button onClick={handleBecomeViewer} disabled={!isDrawer}>
-  //           Gissare
-  //         </button>
-  //       </div>
-  //       {isDrawer && (
-  //         <select value={tool} onChange={(e) => setTool(e.target.value)}>
-  //           <option value="pen">Pen</option>
-  //           <option value="eraser">Eraser</option>
-  //         </select>
-  //       )}
-  //       <Stage
-  //         width={window.innerWidth}
-  //         height={window.innerHeight}
-  //         onMouseDown={handleMouseDown}
-  //         onMousemove={handleMouseMove}
-  //         onMouseup={handleMouseUp}
-  //         onTouchStart={handleMouseDown}
-  //         onTouchMove={handleMouseMove}
-  //         onTouchEnd={handleMouseUp}
-  //         style={{ border: "1px solid #ccc", marginTop: 10 }}
-  //       >
-  //         <Layer>
-  //           <Text
-  //             text={isDrawer ? "Draw something!" : "Live view"}
-  //             x={5}
-  //             y={30}
-  //           />
-  //           {lines.map((line, i) => (
-  //             <Line
-  //               key={i}
-  //               points={line.points}
-  //               stroke="#df4b26"
-  //               strokeWidth={5}
-  //               tension={0.5}
-  //               lineCap="round"
-  //               lineJoin="round"
-  //               globalCompositeOperation={
-  //                 line.tool === "eraser" ? "destination-out" : "source-over"
-  //               }
-  //             />
-  //           ))}
-  //         </Layer>
-  //       </Stage>
-  //       {!connected && (
-  //         <div style={{ color: "red" }}>Connecting to server...</div>
-  //       )}
-  //     </div>
-  //   );
-};
+import { useGameClient } from "../utils/UseGameClient";
 
-export default App;
+export function KonvaDrawing() {
+  const [tool, setTool] = React.useState("pen");
+  const [isDrawer, setIsDrawer] = useState(false);
+  const { connected, lines, sendLine, clearLines } = useGameClient(isDrawer);
+  console.log("Nuvarande lines:", lines);
+  const [selectedColor, setSelectedColor] = useState<string>("#563d7c");
+
+  const isDrawing = React.useRef(false);
+  const currentLine = useRef<{
+    tool: string;
+    points: number[];
+    color: string;
+    newLine: boolean;
+  } | null>(null);
+
+  // denna hanterar när vi trycker ner musknappen
+  const handleMouseDown = (e: any) => {
+    if (!isDrawer) return;
+    isDrawing.current = true;
+    const pos = e.target.getStage().getPointerPosition();
+    console.log("Pointer position:", pos);
+    const newLine = {
+      tool,
+      points: [pos.x, pos.y],
+      color: selectedColor,
+      newLine: true,
+    };
+    currentLine.current = newLine;
+    console.log("Sending line:", newLine);
+    sendLine(newLine);
+  };
+
+  // handerar musrörelsen
+  const handleMouseMove = (e: any) => {
+    if (!isDrawer || !isDrawing.current) return;
+    const stage = e.target.getStage();
+    const point = stage.getPointerPosition();
+    if (currentLine.current && currentLine.current.points) {
+      currentLine.current.points = currentLine.current.points.concat([
+        point.x,
+        point.y,
+      ]);
+      sendLine({
+        tool: currentLine.current.tool,
+        points: currentLine.current.points,
+        color: currentLine.current.color,
+        newLine: false,
+      });
+    }
+  };
+
+  // hanterar när vi släpper musknappen
+  const handleMouseUp = () => {
+    if (!isDrawer) return;
+    isDrawing.current = false;
+    currentLine.current = null;
+  };
+
+  // hanterar knapparna för att byta mellan ritare och gissare
+  const handleBecomeDrawer = () => {
+    setIsDrawer(true);
+    clearLines();
+  };
+
+  // hanterar när vi blir gissare
+  const handleBecomeViewer = () => {
+    setIsDrawer(false);
+    clearLines();
+  };
+
+  return (
+    <div className="flex flex-row justify-end min-h-screen">
+      <div className="flex flex-col items-end gap-4 p-4">
+        <div className="flex flex-row gap-2 w-full max-w-xl items-center">
+          <button
+            className="h-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            onClick={handleBecomeDrawer}
+            disabled={isDrawer}
+          >
+            Ritare Klicka här
+          </button>
+          <ColoprPicker onColorChange={setSelectedColor} />
+          <button
+            className="h-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            onClick={handleBecomeViewer}
+            disabled={!isDrawer}
+          >
+            Gissare
+          </button>
+          {isDrawer && (
+            <div className="flex gap-2 mt-2">
+              <select value={tool} onChange={(e) => setTool(e.target.value)}>
+                <option value="pen">Pen</option>
+                <option value="eraser">Eraser</option>
+              </select>
+              <input
+                type="color"
+                value={selectedColor}
+                onChange={(e) => setSelectedColor(e.target.value)}
+              />
+            </div>
+          )}
+        </div>
+        <Stage
+          width={800}
+          height={500}
+          onMouseDown={handleMouseDown}
+          onMousemove={handleMouseMove}
+          onMouseup={handleMouseUp}
+          onTouchStart={handleMouseDown}
+          onTouchMove={handleMouseMove}
+          onTouchEnd={handleMouseUp}
+          className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black placeholder-gray-400 mt-4"
+        >
+          <Layer>
+            <Text
+              text={isDrawer ? "Draw something!" : "Live view"}
+              x={5}
+              y={30}
+            />
+            {lines.map((line, i) => (
+              <Line
+                key={i}
+                points={line.points}
+                stroke={line.color}
+                strokeWidth={5}
+                tension={0.5}
+                lineCap="round"
+                lineJoin="round"
+                globalCompositeOperation={
+                  line.tool === "eraser" ? "destination-out" : "source-over"
+                }
+              />
+            ))}
+          </Layer>
+        </Stage>
+        {!connected && (
+          <div style={{ color: selectedColor }}>Connecting to server...</div>
+        )}
+      </div>
+    </div>
+  );
+}

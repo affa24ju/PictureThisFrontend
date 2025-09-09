@@ -15,7 +15,7 @@ export function ChatMessage() {
   };
 
   return (
-    <div className="flex flex-col justify-end min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
+    <div className="flex flex-col justify-end min-h-screen">
       <div className="flex flex-col gap-2 p-4">
         <ul className="mb-2">
           {messages.map((mes, i) => (

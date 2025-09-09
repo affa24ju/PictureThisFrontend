@@ -9,37 +9,50 @@ interface ChatMessage {
 
 export function useChatClient() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
-    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{")
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    const [connected, setConnected] = useState(false);
 
-    useEffect(()=>{
-        StompClient.onConnect = () =>{
-            console.log("Connected to stomp");
+    useEffect(() => {
+  let subscription: any;
 
-            StompClient.subscribe('/topic/messages', (greetings)=>{
-                console.log("Sub callback fired!", greetings);
-                console.log("New message received" + greetings.body);
-                const pars = JSON.parse(greetings.body);
-                console.log("received message: ", pars);
-                setMessages((p) => [...p, pars]);
-            });
-            console.log()
-        }
-        StompClient.activate();
-
-        return () =>{
-            StompClient.deactivate();
-        }
-    }, [])
-
-    const sendMessage = (greetings:string)=>{
-        StompClient.publish({
-            destination: '/app/chat',
-              body: JSON.stringify({
-              userName: currentUser.userName,
-              messageContent: greetings
-            })
-        });
+  const subscribe = () => {
+    if (!subscription) {
+      subscription = StompClient.subscribe("/topic/messages", (msg) => {
+        const chat = JSON.parse(msg.body);
+        setMessages((prev) => [...prev, chat]);
+      });
     }
+  };
 
-    return {messages, sendMessage}
+  if (StompClient.connected) {
+    subscribe();
+  } else if (!StompClient.active) {
+    StompClient.onConnect = () => {
+      subscribe();
+      setConnected(true);
+      console.log("Connected to Chatstomp");
+    };
+    StompClient.activate();
+  }
+
+  return () => {
+    if (subscription) subscription.unsubscribe();
+  };
+}, []);
+
+    const sendMessage = (greetings: string) => {
+         if (!connected) {
+    console.warn("Chat not connected yet");
+    return;
+  }
+        StompClient.publish({
+            destination: "/app/chat",
+            body: JSON.stringify({
+                userName: currentUser.userName,
+                messageContent: greetings,
+            }),
+        });
+    };
+
+    return { messages, sendMessage };
 }
