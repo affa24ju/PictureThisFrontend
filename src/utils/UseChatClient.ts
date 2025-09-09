@@ -2,21 +2,21 @@ import { useEffect, useState } from "react";
 import { StompClient } from "./StompConnect";
 
 interface ChatMessage {
-    content : string;
-    user: {
-        id: string;
-        userName: string;
-    }
+    messageContent: string;
+    userName: string;
+    
 }
 
 export function useChatClient() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{")
 
     useEffect(()=>{
         StompClient.onConnect = () =>{
             console.log("Connected to stomp");
 
             StompClient.subscribe('/topic/messages', (greetings)=>{
+                console.log("Sub callback fired!", greetings);
                 console.log("New message received" + greetings.body);
                 const pars = JSON.parse(greetings.body);
                 console.log("received message: ", pars);
@@ -25,17 +25,18 @@ export function useChatClient() {
             console.log()
         }
         StompClient.activate();
+
+        return () =>{
+            StompClient.deactivate();
+        }
     }, [])
 
     const sendMessage = (greetings:string)=>{
         StompClient.publish({
             destination: '/app/chat',
-            body: JSON.stringify({
-                content: greetings,
-                user: {
-                    id: "user_id",
-                    userName: "user_name"
-                }
+              body: JSON.stringify({
+              userName: currentUser.userName,
+              messageContent: greetings
             })
         });
     }

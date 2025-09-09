@@ -1,6 +1,5 @@
 import { useChatClient } from "../utils/UseChatClient";
 import { TextArea } from "@radix-ui/themes";
-import "../css/ChatMessageCss.css";
 import { useState } from "react";
 
 export function ChatMessage() {
@@ -17,24 +16,26 @@ export function ChatMessage() {
 
   return (
     <div className="flex flex-col justify-end min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
-      <div className="flex items-center gap-2 p-4">
-        <ul>
+      <div className="flex flex-col gap-2 p-4">
+        <ul className="mb-2">
           {messages.map((mes, i) => (
             <li key={i}>
-              {mes.user.userName}: {mes.content}
+              <strong>{mes.userName ?? "Unknown"}:</strong> {mes.messageContent}
             </li>
           ))}
         </ul>
-        <TextArea
-          className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black placeholder-gray-400"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Reply to comment…"
-          onKeyDown={keyPress}
-        />
-        <button className="h-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-          send
-        </button>
+        <div className="flex items-center gap-2">
+          <TextArea
+            className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black placeholder-gray-400"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Reply to comment…"
+            onKeyDown={keyPress}
+          />
+          <button className="h-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            send
+          </button>
+        </div>
       </div>
     </div>
   );
