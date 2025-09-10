@@ -63,8 +63,11 @@ export function useGameState() {
   // Subscribe to game-related STOMP topics
   useEffect(() => {
     let subscriptions: any[] = [];
+    let mounted = true;
 
     const subscribe = () => {
+      if (!mounted) return;
+      
       // Subscribe to personal word assignments
       const wordSub = StompClient.subscribe("/user/queue/game-state", (word) => {
         const wordToDraw = word.body;
@@ -86,16 +89,31 @@ export function useGameState() {
       subscribe();
     } else if (!StompClient.active) {
       StompClient.onConnect = () => {
-        subscribe();
-        console.log("Connected to Game State");
+        if (mounted) {
+          subscribe();
+          console.log("Connected to Game State");
+        }
       };
       StompClient.activate();
+    } else {
+      // Use polling to check for connection
+      const checkConnection = () => {
+        if (!mounted) return;
+        if (StompClient.connected) {
+          subscribe();
+          console.log("Connected to Game State");
+        } else {
+          setTimeout(checkConnection, 100);
+        }
+      };
+      checkConnection();
     }
 
     return () => {
+      mounted = false;
       subscriptions.forEach((sub) => sub && sub.unsubscribe());
     };
-  }, [currentUser.userName]);
+  }, []);
 
   const gameState: GameState = {
     currentWord,

@@ -1,4 +1,4 @@
- import { useEffect, useState } from "react";
+ import { useEffect, useState, useCallback } from "react";
  import { StompClient } from "./StompConnect";
 
 
@@ -11,19 +11,19 @@ interface Line{
 }
 
 
- export function useGameClient(isDrawer:boolean){
+ export function useGameClient(){
     
     const [connected, setConnected] = useState(false);
     const [lines, setLines] = useState<Line[]>([]);
 
 
  useEffect(()=>{
-    const preOnConnect = StompClient.onConnect;
     let subscription: any;
+    let mounted = true;
 
-    StompClient.onConnect = (frame) => {
-        if(preOnConnect) preOnConnect(frame)
-
+    const subscribe = () => {
+        if (!mounted) return;
+        
         console.log("Connected to LineStomp");
         setConnected(true);
 
@@ -49,30 +49,50 @@ interface Line{
       }
     });
   });
-}
-    if (!StompClient.active) {
-    StompClient.activate();
-  }
+    };
+
+    if (StompClient.connected) {
+        subscribe();
+    } else if (!StompClient.active) {
+        StompClient.onConnect = () => {
+            if (mounted) {
+                subscribe();
+            }
+        };
+        StompClient.activate();
+    } else {
+        // Use polling to check for connection
+        const checkConnection = () => {
+            if (!mounted) return;
+            if (StompClient.connected) {
+                subscribe();
+            } else {
+                setTimeout(checkConnection, 100);
+            }
+        };
+        checkConnection();
+    }
 
     return () =>{
-    if(subscription) subscription.unsubscribe();
+        mounted = false;
+        if(subscription) subscription.unsubscribe();
     }
     
- },[isDrawer])
+ },[])
 
-    const sendLine =(data: Line) =>{
+    const sendLine = useCallback((data: Line) => {
         console.log("sendLine anropad med:", data);
         StompClient.publish({
             destination:"/app/draw",
             body: JSON.stringify(data),
 
         });
-    };
+    }, []);
 
     //rensar linjerna
-    const clearLines =()=>{
+    const clearLines = useCallback(() => {
         setLines([]);
-    }
+    }, []);
 
     return{connected, lines, sendLine, clearLines}
  }

@@ -1,11 +1,12 @@
-import { useChatClient } from "../utils/UseChatClient";
-import { useGameState } from "../utils/UseGameState";
 import { TextArea } from "@radix-ui/themes";
 import { useState } from "react";
 
-export function ChatMessage() {
-  const { messages, sendMessage } = useChatClient();
-  const { currentWord, isDrawer } = useGameState();
+interface ChatMessageProps {
+  messages: Array<{ messageContent: string; userName: string }>;
+  sendMessage: (message: string) => void;
+}
+
+export function ChatMessage({ messages, sendMessage }: ChatMessageProps) {
   const [input, setInput] = useState("");
   
   // trycker man på enter så skickas meddelandet
@@ -21,13 +22,6 @@ export function ChatMessage() {
   return (
     <div className="flex flex-col justify-end min-h-screen">
       <div className="flex flex-col gap-2 p-4">
-        {/* Optional: Display game state info */}
-        {isDrawer && currentWord && (
-          <div className="bg-blue-100 p-2 rounded mb-2">
-            <strong>Du ritar:</strong> {currentWord}
-          </div>
-        )}
-        
         <ul className="mb-2">
           {messages.map((mes, i) => (
             <li key={i}>
