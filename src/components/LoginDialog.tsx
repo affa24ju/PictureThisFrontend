@@ -18,6 +18,7 @@ export default function LoginDialog() {
         _id: res.data._id,
         userName: res.data.userName,
       };
+      localStorage.setItem("currentUser", JSON.stringify(userData));
       console.log(userData);
       alert("Login successful!");
       window.location.href = "/gamepage";
