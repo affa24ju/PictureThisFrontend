@@ -9,6 +9,7 @@ export function ColoprPicker({ onColorChange }: ColorPickerProps) {
 
   return (
     <>
+      <span>Välj färg:</span>
       <input
         type="color"
         onChange={handleColorChange}
