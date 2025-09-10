@@ -12,6 +12,7 @@ export default function RegistreraDialog() {
     if (res.success) {
       // här kan man lägga in en onClose som man kan koppla till gamepage sen
       alert("User created successfully!");
+      window.location.href = "/";
     } else {
       alert("Error creating user. Please try again.");
     }
