@@ -1,5 +1,6 @@
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client"
+import { SERVER_BASE_URL } from "../config/server";
 
 
 //test
@@ -12,7 +13,7 @@ export const StompClient = new Client({
     reconnectDelay: 5000,
     //hur den skapar transporten och skapar en StockJS instans mot backend
     webSocketFactory: () => {
-        return new SockJS(`http://localhost:8080/ws?user=${currentUser.userName}`);
+        return new SockJS(`${SERVER_BASE_URL}/ws?user=${currentUser.userName}`);
     }
 })
 

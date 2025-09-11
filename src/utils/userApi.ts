@@ -1,7 +1,8 @@
 import axios from "axios";
+import { SERVER_BASE_URL } from "../config/server";
 
 
-const BASE_URL = "http://localhost:8080/api/users";
+const BASE_URL = `${SERVER_BASE_URL}/api/users`;
 
 type user ={
     userName: string;

@@ -1,14 +1,15 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Stage, Layer, Line, Text } from "react-konva";
 import { ColoprPicker } from "./ColorPicker";
-
 import { useGameClient } from "../utils/UseLineClient";
 
-export function KonvaDrawing() {
+interface KonvaProps {
+  isDrawer: boolean;
+}
+
+export function KonvaDrawing({ isDrawer }: KonvaProps) {
   const [tool, setTool] = React.useState("pen");
-  const [isDrawer, setIsDrawer] = useState(false);
-  const { connected, lines, sendLine, clearLines } = useGameClient(isDrawer);
-  console.log("Nuvarande lines:", lines);
+  const { connected, lines, sendLine, setLines } = useGameClient();
   const [selectedColor, setSelectedColor] = useState<string>("#563d7c");
 
   const isDrawing = React.useRef(false);
@@ -18,6 +19,11 @@ export function KonvaDrawing() {
     color: string;
     newLine: boolean;
   } | null>(null);
+
+  // rensar konvabrädet här istället för i uselineclient
+  useEffect(() => {
+    setLines([]);
+  }, [isDrawer]);
 
   // denna hanterar när vi trycker ner musknappen
   const handleMouseDown = (e: any) => {
@@ -62,39 +68,13 @@ export function KonvaDrawing() {
     currentLine.current = null;
   };
 
-  // hanterar knapparna för att byta mellan ritare och gissare
-  const handleBecomeDrawer = () => {
-    setIsDrawer(true);
-    clearLines();
-  };
-
-  // hanterar när vi blir gissare
-  const handleBecomeViewer = () => {
-    setIsDrawer(false);
-    clearLines();
-  };
-
   return (
     <div className="flex flex-row justify-end min-h-screen">
       <div className="flex flex-col items-end gap-4 p-4">
         <div className="flex flex-row gap-2 w-full max-w-xl items-center">
-          <button
-            className="h-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            onClick={handleBecomeDrawer}
-            disabled={isDrawer}
-          >
-            Ritare Klicka här
-          </button>
           <ColoprPicker onColorChange={setSelectedColor} />
-          <button
-            className="h-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            onClick={handleBecomeViewer}
-            disabled={!isDrawer}
-          >
-            Gissare
-          </button>
           {isDrawer && (
-            <div className="flex gap-2 mt-2">
+            <div className="flex gap-2">
               <select value={tool} onChange={(e) => setTool(e.target.value)}>
                 <option value="pen">Pen</option>
                 <option value="eraser">Eraser</option>

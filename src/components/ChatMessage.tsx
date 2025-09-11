@@ -1,10 +1,14 @@
-import { useChatClient } from "../utils/UseChatClient";
 import { TextArea } from "@radix-ui/themes";
 import { useState } from "react";
 
-export function ChatMessage() {
-  const { messages, sendMessage } = useChatClient();
+interface ChatMessageProps {
+  messages: Array<{ messageContent: string; userName: string }>;
+  sendMessage: (message: string) => void;
+}
+
+export function ChatMessage({ messages, sendMessage }: ChatMessageProps) {
   const [input, setInput] = useState("");
+  
   // trycker man på enter så skickas meddelandet
   const keyPress = (event: any) => {
     if (event.key === "Enter") {
