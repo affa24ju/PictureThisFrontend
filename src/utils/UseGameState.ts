@@ -26,7 +26,6 @@ export function useGameState() {
   const [gameMessages, setGameMessages] = useState<GameMessage[]>([]);
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
 
-  // Handle game events and generate messages
   useEffect(() => {
     if (!gameUpdate) return;
     
@@ -37,7 +36,6 @@ export function useGameState() {
         break;
       case "NEW_ROUND":
         messageContent = `Ny runda! ${gameUpdate.content.userName} är nästa att rita. 🖌️`;
-        // Update drawer status for new round
         setIsDrawer(gameUpdate.content.userName === currentUser.userName);
         if (gameUpdate.content.userName !== currentUser.userName) {
           setCurrentWord(null);
@@ -54,64 +52,55 @@ export function useGameState() {
     if (messageContent) {
       const gameMessage: GameMessage = {
         messageContent,
-        userName: "System", // System messages
+        userName: "System",
       };
       setGameMessages(prev => [...prev, gameMessage]);
     }
   }, [gameUpdate, currentUser.userName]);
 
-  // Subscribe to game-related STOMP topics
+  // useEffect för att subscriba till /topic/game-updates och game-state
   useEffect(() => {
     let subscriptions: any[] = [];
-    let mounted = true;
+    const preOnConnect = StompClient.onConnect;
 
     const subscribe = () => {
-      if (!mounted) return;
-      
-      // Subscribe to personal word assignments
-      const wordSub = StompClient.subscribe("/user/queue/game-state", (word) => {
+      const sub1 = StompClient.subscribe("/user/queue/game-state", (word) => {
         const wordToDraw = word.body;
         console.log("Ordet att rita är: " + wordToDraw);
         setCurrentWord(wordToDraw);
         setIsDrawer(true);
+        
+        // Add word as a game message
+        const gameMessage: GameMessage = {
+          messageContent: `Ditt ord att rita är: ${wordToDraw} 🎨`,
+          userName: "System",
+        };
+        setGameMessages(prev => [...prev, gameMessage]);
       });
 
-      // Subscribe to game updates
-      const gameUpdateSub = StompClient.subscribe("/topic/game-updates", (update) => {
+      const sub2 = StompClient.subscribe("/topic/game-updates", (update) => {
         const gameUpdate = JSON.parse(update.body);
         setGameUpdate(gameUpdate);
       });
 
-      subscriptions = [wordSub, gameUpdateSub];
+      subscriptions = [sub1, sub2];
+      console.log("Connected to GameStateStomp");
+    };
+
+    StompClient.onConnect = (frame) => {
+      if (preOnConnect) preOnConnect(frame);
+      subscribe();
     };
 
     if (StompClient.connected) {
       subscribe();
     } else if (!StompClient.active) {
-      StompClient.onConnect = () => {
-        if (mounted) {
-          subscribe();
-          console.log("Connected to Game State");
-        }
-      };
       StompClient.activate();
-    } else {
-      // Use polling to check for connection
-      const checkConnection = () => {
-        if (!mounted) return;
-        if (StompClient.connected) {
-          subscribe();
-          console.log("Connected to Game State");
-        } else {
-          setTimeout(checkConnection, 100);
-        }
-      };
-      checkConnection();
     }
 
     return () => {
-      mounted = false;
       subscriptions.forEach((sub) => sub && sub.unsubscribe());
+      StompClient.onConnect = preOnConnect;
     };
   }, []);
 

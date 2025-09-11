@@ -9,7 +9,7 @@ interface KonvaProps {
 
 export function KonvaDrawing({ isDrawer }: KonvaProps) {
   const [tool, setTool] = React.useState("pen");
-  const { connected, lines, sendLine, clearLines } = useGameClient();
+  const { connected, lines, sendLine, setLines } = useGameClient();
   const [selectedColor, setSelectedColor] = useState<string>("#563d7c");
 
   const isDrawing = React.useRef(false);
@@ -20,10 +20,10 @@ export function KonvaDrawing({ isDrawer }: KonvaProps) {
     newLine: boolean;
   } | null>(null);
 
-  // Clear lines when drawer status changes
+  // rensar konvabrädet här istället för i uselineclient
   useEffect(() => {
-    clearLines();
-  }, [isDrawer, clearLines]);
+    setLines([]);
+  }, [isDrawer]);
 
   // denna hanterar när vi trycker ner musknappen
   const handleMouseDown = (e: any) => {
