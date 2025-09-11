@@ -11,6 +11,7 @@ export function ChatMessage() {
       event.preventDefault();
       console.log("Enter pressed, sending message:", input);
       sendMessage(input);
+      setInput("");
     }
   };
 
@@ -29,12 +30,9 @@ export function ChatMessage() {
             className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black placeholder-gray-400"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Reply to comment…"
+            placeholder="Tryck på enter för att skicka"
             onKeyDown={keyPress}
           />
-          <button className="h-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-            send
-          </button>
         </div>
       </div>
     </div>

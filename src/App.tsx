@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import GamePage from "./pages/GamePage";
+import PrivateRoute from "./utils/PrivateRoute";
 
 export default function App() {
   return (
@@ -8,7 +9,14 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/gamepage" element={<GamePage />} />
+          <Route
+            path="/gamepage"
+            element={
+              <PrivateRoute>
+                <GamePage />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>

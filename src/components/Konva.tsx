@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Stage, Layer, Line, Text } from "react-konva";
 import { ColoprPicker } from "./ColorPicker";
 
-import { useGameClient } from "../utils/UseGameClient";
+import { useGameClient } from "../utils/UseLineClient";
 
 export function KonvaDrawing() {
   const [tool, setTool] = React.useState("pen");

@@ -24,7 +24,7 @@ interface Line{
     StompClient.onConnect = (frame) => {
         if(preOnConnect) preOnConnect(frame)
 
-        console.log("Connected to Gamestomp");
+        console.log("Connected to LineStomp");
         setConnected(true);
 
         // vad den ska prenumerera på
