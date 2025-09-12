@@ -26,6 +26,7 @@ export function useGameState() {
   const [gameMessages, setGameMessages] = useState<GameMessage[]>([]);
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
 
+  // useEffect för att hantera gameUpdate ändringar
   useEffect(() => {
     if (!gameUpdate) return;
     
@@ -70,7 +71,7 @@ export function useGameState() {
         setCurrentWord(wordToDraw);
         setIsDrawer(true);
         
-        // Add word as a game message
+        // Skicka ett systemmeddelande när användaren blir ritare
         const gameMessage: GameMessage = {
           messageContent: `Ditt ord att rita är: ${wordToDraw} 🎨`,
           userName: "System",

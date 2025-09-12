@@ -16,7 +16,7 @@ export function useGameClient() {
     const [connected, setConnected] = useState(false);
     const [lines, setLines] = useState<Line[]>([]);
 
-
+// useEffect för att subscriba till /topic/line
     useEffect(() => {
         const preOnConnect = StompClient.onConnect;
         let subscription: any;
@@ -66,6 +66,8 @@ export function useGameClient() {
         }
 
     }, [])
+
+    // funktion för att skicka linjer till backend
 
     const sendLine = (data: Line) => {
         console.log("sendLine anropad med:", data);

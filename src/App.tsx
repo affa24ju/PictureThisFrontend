@@ -12,6 +12,7 @@ export default function App() {
           <Route
             path="/gamepage"
             element={
+              // här används PrivateRoute för att skydda GamePage bara inloggade får tillgång till denna sida
               <PrivateRoute>
                 <GamePage />
               </PrivateRoute>
