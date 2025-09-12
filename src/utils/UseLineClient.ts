@@ -11,7 +11,7 @@ interface Line {
 }
 
 
-export function useGameClient() {
+export function useGameClient(isDrawer: boolean = false) {
 
     const [connected, setConnected] = useState(false);
     const [lines, setLines] = useState<Line[]>([]);
@@ -21,14 +21,17 @@ export function useGameClient() {
         const preOnConnect = StompClient.onConnect;
         let subscription: any;
 
-        StompClient.onConnect = (frame) => {
-            if (preOnConnect) preOnConnect(frame)
+        const setupSubscription = () => {
+            // Ta bort subscription om du är subscribead
+            // TODO - ta endast bort om du är drawer, och subscribea om du !isDrawer && !subscribed
+            if (subscription) {
+                subscription.unsubscribe();
+                subscription = null;
+            }
 
-            console.log("Connected to LineStomp");
-            setConnected(true);
-
-            // Den subscribear 2 gånger, så subscribea endast om ej subscribead (:
-            if (!subscription) {
+            // Subscribea endast om du INTE är drawer
+            if (!isDrawer) {
+                console.log("Subscribing to /topic/line as viewer");
                 subscription = StompClient.subscribe("/topic/line", (drawer) => {
                     const stroke = JSON.parse(drawer.body);
                     console.log("Mottagit linje från backend:", stroke);
@@ -50,10 +53,25 @@ export function useGameClient() {
                         }
                     });
                 });
+            } else {
+                console.log("Not subscribing to /topic/line - I am the drawer");
             }
+        };
+
+        StompClient.onConnect = (frame) => {
+            if (preOnConnect) preOnConnect(frame)
+
+            console.log("Connected to LineStomp");
+            setConnected(true);
+            
+            setupSubscription();
         }
 
-        if (!StompClient.active) {
+        // om connected, subscribea
+        if (StompClient.connected) {
+            setConnected(true);
+            setupSubscription();
+        } else if (!StompClient.active) {
             StompClient.activate();
         }
 
@@ -65,14 +83,33 @@ export function useGameClient() {
             StompClient.onConnect = preOnConnect;
         }
 
-    }, [])
+    }, [isDrawer])
 
     const sendLine = (data: Line) => {
+        if (!connected) {
+            console.warn("Försöker skicka linje men ej ansluten till server");
+            return;
+        }
         console.log("sendLine anropad med:", data);
+        
+        // Om du ritar, lägg till linjen direkt istället för att hämta från websocket
+        if (isDrawer) {
+            setLines((prev) => {
+                if (data.newLine) {
+                    return [...prev, data];
+                } else {
+                    const updated = [...prev];
+                    if (updated.length > 0) {
+                        updated[updated.length - 1] = data;
+                    }
+                    return updated;
+                }
+            });
+        }
+        
         StompClient.publish({
             destination: "/app/draw",
             body: JSON.stringify(data),
-
         });
     };
 
