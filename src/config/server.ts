@@ -1,2 +1,2 @@
 // Server configuration
-export const SERVER_BASE_URL = "picturethis.railway.internal";
+export const SERVER_BASE_URL = "https://picturethis-production.up.railway.app";
