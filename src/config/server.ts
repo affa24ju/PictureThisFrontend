@@ -1,2 +1,2 @@
 // Server configuration
-export const SERVER_BASE_URL = "http://nozomi.proxy.rlwy.net";
+export const SERVER_BASE_URL = "https://nozomi.proxy.rlwy.net";
