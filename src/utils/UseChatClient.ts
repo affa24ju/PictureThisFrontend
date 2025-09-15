@@ -5,6 +5,7 @@ interface ChatMessage {
     messageContent: string;
     userName: string;  
 }
+// hook för chatten
 
 export function useChatClient(gameMessages: Array<{messageContent: string; userName: string}>) {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -12,7 +13,8 @@ export function useChatClient(gameMessages: Array<{messageContent: string; userN
     const [connected, setConnected] = useState(false);
     
     const [lastGameMessageCount, setLastGameMessageCount] = useState(0);
-
+    
+// useEffect för att uppdatera meddelanden när gameMessages ändras
     useEffect(() => {
         if (gameMessages.length > lastGameMessageCount) {
             const newMessages = gameMessages.slice(lastGameMessageCount);

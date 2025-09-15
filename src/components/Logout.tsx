@@ -1,8 +1,9 @@
 import { useState } from "react";
 
+//funktion för att logga ut
 export function Logout() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-
+  // kollar i localstorage och tar bort currentuser och återvänder till startsidan
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
     setIsLoggedIn(false);

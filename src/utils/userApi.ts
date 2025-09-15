@@ -1,13 +1,15 @@
 import axios from "axios";
 import { SERVER_BASE_URL } from "../config/server";
 
-
+// bas url för user api
 const BASE_URL = `${SERVER_BASE_URL}/api/users`;
 
 type user ={
     userName: string;
     password:string;
 }
+
+// här är alla api anrop för user
 
 export async function registerNewUser(newUser:user){
     try{
