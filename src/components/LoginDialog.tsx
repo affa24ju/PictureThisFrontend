@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { loginUser } from "../utils/userApi";
+import Cookies from "js-cookie";
 
 export default function LoginDialog() {
   const [userName, setUserName] = useState<string>("");
@@ -13,13 +14,8 @@ export default function LoginDialog() {
     console.log("Log in as: ", res);
 
     // kollar så att userdata finns
-    if (res.success) {
-      const userData = {
-        _id: res.data._id,
-        userName: res.data.userName,
-      };
-      localStorage.setItem("currentUser", JSON.stringify(userData));
-      console.log(userData);
+    if (res.success && res.data.token) {
+      Cookies.set("currentUser", res.data.token); // Spara JWT-token
       alert("Login successful!");
       window.location.href = "/gamepage";
     } else {

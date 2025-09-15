@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { StompClient } from "./StompConnect";
+import { getUserNameFromToken } from "./UserNameToken";
 
 type GameUpdate =
   | { event: "CORRECT_GUESS"; content: { userName: string; word: string } }
@@ -24,7 +25,8 @@ export function useGameState() {
   const [isDrawer, setIsDrawer] = useState(false);
   const [gameUpdate, setGameUpdate] = useState<GameUpdate | null>(null);
   const [gameMessages, setGameMessages] = useState<GameMessage[]>([]);
-  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  const userName = getUserNameFromToken();
+
 
   // useEffect för att hantera gameUpdate ändringar
   useEffect(() => {
@@ -37,8 +39,8 @@ export function useGameState() {
         break;
       case "NEW_ROUND":
         messageContent = `Ny runda! ${gameUpdate.content.userName} är nästa att rita. 🖌️`;
-        setIsDrawer(gameUpdate.content.userName === currentUser.userName);
-        if (gameUpdate.content.userName !== currentUser.userName) {
+        setIsDrawer(gameUpdate.content.userName === userName);
+        if (gameUpdate.content.userName !== userName) {
           setCurrentWord(null);
         }
         break;
@@ -57,7 +59,7 @@ export function useGameState() {
       };
       setGameMessages(prev => [...prev, gameMessage]);
     }
-  }, [gameUpdate, currentUser.userName]);
+  }, [gameUpdate,userName]);
 
   // useEffect för att subscriba till /topic/game-updates och game-state
   useEffect(() => {
@@ -114,3 +116,5 @@ export function useGameState() {
 
   return gameState;
 }
+
+
