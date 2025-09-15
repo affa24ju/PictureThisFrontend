@@ -1,10 +1,12 @@
 import { useState } from "react";
+import Cookies from "js-cookie";
 
+//funktion för att logga ut
 export function Logout() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-
+  // kollar i Cookies och tar bort currentuser och återvänder till startsidan
   const handleLogout = () => {
-    localStorage.removeItem("currentUser");
+    Cookies.remove("currentUser"); // Tar bort JWT-token
     setIsLoggedIn(false);
     window.location.href = "/";
     window.location.reload();

@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
 import { StompClient } from "./StompConnect";
 
+import { getUserNameFromToken } from "./UserNameToken";
+
 interface ChatMessage {
     messageContent: string;
     userName: string;  
 }
+// hook för chatten
 
 export function useChatClient(gameMessages: Array<{messageContent: string; userName: string}>) {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
-    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+     const userName = getUserNameFromToken();
     const [connected, setConnected] = useState(false);
     
     const [lastGameMessageCount, setLastGameMessageCount] = useState(0);
 
+    
+
+// useEffect för att uppdatera meddelanden när gameMessages ändras
     useEffect(() => {
         if (gameMessages.length > lastGameMessageCount) {
             const newMessages = gameMessages.slice(lastGameMessageCount);
@@ -63,7 +69,7 @@ export function useChatClient(gameMessages: Array<{messageContent: string; userN
         StompClient.publish({
             destination: "/app/chat",
             body: JSON.stringify({
-                userName: currentUser.userName,
+                userName: userName,
                 messageContent: greetings,
             }),
         });

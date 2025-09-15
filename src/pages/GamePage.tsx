@@ -3,7 +3,7 @@ import { KonvaDrawing } from "../components/Konva";
 import { Logout } from "../components/Logout";
 import { useChatClient } from "../utils/UseChatClient";
 import { useGameState } from "../utils/UseGameState";
-
+// huvudsidan för spelet, här finns både chatten och ritfunktionen
 export default function GamePage() {
   const gameState = useGameState();
   const { isDrawer, gameMessages } = gameState;

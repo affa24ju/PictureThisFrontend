@@ -1,8 +1,11 @@
+// en liten färgplockar funktion, här får man upp en färgplatta så man kan välja färger
+
 type ColorPickerProps = {
   onColorChange: (color: string) => void;
 };
 
 export function ColoprPicker({ onColorChange }: ColorPickerProps) {
+  // här hanteras färgändringarna
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onColorChange(e.target.value);
   };

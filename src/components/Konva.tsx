@@ -6,7 +6,7 @@ import { useGameClient } from "../utils/UseLineClient";
 interface KonvaProps {
   isDrawer: boolean;
 }
-
+// denna komponent hanterar ritfunktionen med konva biblioteket
 export function KonvaDrawing({ isDrawer }: KonvaProps) {
   const [tool, setTool] = React.useState("pen");
   const { connected, lines, sendLine, setLines } = useGameClient(isDrawer);

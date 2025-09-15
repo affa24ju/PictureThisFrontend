@@ -1,5 +1,6 @@
 import { TextArea } from "@radix-ui/themes";
 import { useState } from "react";
+import { useRef, useEffect } from "react";
 
 interface ChatMessageProps {
   messages: Array<{ messageContent: string; userName: string }>;
@@ -7,8 +8,25 @@ interface ChatMessageProps {
 }
 
 export function ChatMessage({ messages, sendMessage }: ChatMessageProps) {
+  const messagesEndRef = useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
   const [input, setInput] = useState("");
-  
+  const [userColors] = useState<{ [key: string]: string }>({});
+
+  //ändrar färg på användarnamn
+  const getUserColors = (name: string) => {
+    if (!userColors[name]) {
+      const color = Math.floor(Math.random() * 360);
+      userColors[name] = `hsl(${color}, 70%,50%)`;
+    }
+    return userColors[name];
+  };
+
   // trycker man på enter så skickas meddelandet
   const keyPress = (event: any) => {
     if (event.key === "Enter") {
@@ -22,9 +40,28 @@ export function ChatMessage({ messages, sendMessage }: ChatMessageProps) {
   return (
     <div className="flex flex-col justify-end min-h-screen">
       <div className="flex flex-col gap-2 p-4">
-        <ul className="mb-2">
+        <ul
+          className="mb-2"
+          style={{
+            background: "white",
+            borderRadius: "8px",
+            padding: "8px",
+            maxHeight: "500px",
+            overflowY: "auto",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+          }}
+        >
           {messages.map((mes, i) => (
-            <li key={i}>
+            <li
+              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2"
+              key={i}
+              style={{
+                backgroundColor: getUserColors(mes.userName),
+                color: "black",
+              }}
+              // ser till att sista meddelandet alltid syns
+              ref={i === messages.length - 1 ? messagesEndRef : null}
+            >
               <strong>{mes.userName ?? "Unknown"}:</strong> {mes.messageContent}
             </li>
           ))}
