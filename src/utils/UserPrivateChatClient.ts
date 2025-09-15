@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { StompClient } from "./StompConnect";
+import { getUserNameFromToken } from "./UserNameToken";
 
 interface ChatMessage {
     messageContent: string;
@@ -10,8 +11,10 @@ interface ChatMessage {
 // hook för att få privata meddelanden till användaren denna ger nästa ritares ord utan att dom andra ser ordet.
 export function UserPrivateChatClient() {
         const [messages, setMessages] = useState<ChatMessage[]>([]);
-        const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  const userName = getUserNameFromToken();
+  // Hämta användardata från backend med hjälp av token om det behövs
         const [connected, setConnected] = useState(false);
+
     
         // useEffect för att subscriba till /user/queue/game-state
         useEffect(() => {
@@ -52,7 +55,7 @@ export function UserPrivateChatClient() {
             StompClient.publish({
                 destination: "/app/chat",
                 body: JSON.stringify({
-                    userName: currentUser.userName,
+                    userName: userName,
                     messageContent: greetings,
                 }),
             });
