@@ -22,15 +22,15 @@ export function useGameClient(isDrawer: boolean = false) {
         let subscription: any;
 
         const setupSubscription = () => {
-            // Ta bort subscription om du är subscribead
-            // TODO - ta endast bort om du är drawer, och subscribea om du !isDrawer && !subscribed
-            if (subscription) {
+            // Ta bort subscription om du är subscribead och är den som ska rita
+            if (isDrawer && subscription) {
+                console.log("Unsubscribing from /topic/line - switching to drawer mode");
                 subscription.unsubscribe();
                 subscription = null;
             }
 
-            // Subscribea endast om du INTE är drawer
-            if (!isDrawer) {
+            // Subscribea endast om du INTE är drawer och inte redan är subscribead
+            if (!isDrawer && !subscription) {
                 console.log("Subscribing to /topic/line as viewer");
                 subscription = StompClient.subscribe("/topic/line", (drawer) => {
                     const stroke = JSON.parse(drawer.body);
@@ -53,8 +53,10 @@ export function useGameClient(isDrawer: boolean = false) {
                         }
                     });
                 });
-            } else {
+            } else if (isDrawer) {
                 console.log("Not subscribing to /topic/line - I am the drawer");
+            } else {
+                console.log("Already subscribed to /topic/line as viewer");
             }
         };
 
