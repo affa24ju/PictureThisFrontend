@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Stage, Layer, Line, Text } from "react-konva";
-import { ColoprPicker } from "./ColorPicker";
+import { ColorPicker } from "./ColorPicker";
 import { useGameClient } from "../utils/UseLineClient";
 
 interface KonvaProps {
@@ -72,19 +72,17 @@ export function KonvaDrawing({ isDrawer }: KonvaProps) {
     <div className="flex flex-row justify-end min-h-screen">
       <div className="flex flex-col items-end gap-4 p-4">
         <div className="flex flex-row gap-2 w-full max-w-xl items-center">
-          <ColoprPicker onColorChange={setSelectedColor} />
           {isDrawer && (
-            <div className="flex gap-2">
-              <select value={tool} onChange={(e) => setTool(e.target.value)}>
-                <option value="pen">Pen</option>
-                <option value="eraser">Eraser</option>
-              </select>
-              <input
-                type="color"
-                value={selectedColor}
-                onChange={(e) => setSelectedColor(e.target.value)}
-              />
-            </div>
+            <>
+              <ColorPicker onColorChange={setSelectedColor} />
+              <div className="flex gap-2">
+                <select value={tool} onChange={(e) => setTool(e.target.value)}>
+                  <option value="pen">Pen</option>
+                  <option value="eraser">Eraser</option>
+                </select>
+                <input onChange={(e) => setSelectedColor(e.target.value)} />
+              </div>
+            </>
           )}
         </div>
         <Stage
