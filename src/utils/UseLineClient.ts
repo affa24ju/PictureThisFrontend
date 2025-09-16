@@ -8,6 +8,8 @@ interface Line {
     color: string;
     tool: string;
     newLine: boolean;
+    strokeWidth: number;
+    
 }
 
 
@@ -38,7 +40,7 @@ export function useGameClient(isDrawer: boolean = false) {
 
                     setLines((prev) => {
                         if (stroke.newLine) {
-                            return [...prev, { tool: stroke.tool, points: stroke.points, color: stroke.color, newLine: stroke.newLine }];
+                            return [...prev, { tool: stroke.tool, points: stroke.points, color: stroke.color, newLine: stroke.newLine, strokeWidth: stroke.strokeWidth }];
                         } else {
                             const updated = [...prev];
                             if (updated.length > 0) {
@@ -46,7 +48,9 @@ export function useGameClient(isDrawer: boolean = false) {
                                     tool: stroke.tool,
                                     points: stroke.points,
                                     color: stroke.color,
-                                    newLine: stroke.newLine
+                                    newLine: stroke.newLine,
+                                    strokeWidth: stroke.strokeWidth
+
                                 };
                             }
                             return updated;

@@ -9,20 +9,35 @@ interface ChatMessageProps {
 
 export function ChatMessage({ messages, sendMessage }: ChatMessageProps) {
   const messagesEndRef = useRef<HTMLLIElement | null>(null);
+  const [input, setInput] = useState("");
+  const userColors: { [name: string]: string } = {};
 
+  const palette = [
+    "#7F9CF5",
+    "#A78BFA",
+    "#F472B6",
+    "#38BDF8",
+    "#818CF8",
+    "#C084FC",
+    "#F472B6",
+    "#60A5FA",
+    "#F0ABFC",
+    "#5EEAD4",
+  ];
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-  const [input, setInput] = useState("");
-  const [userColors] = useState<{ [key: string]: string }>({});
 
   //ändrar färg på användarnamn
   const getUserColors = (name: string) => {
     if (!userColors[name]) {
-      const color = Math.floor(Math.random() * 360);
-      userColors[name] = `hsl(${color}, 70%,50%)`;
+      const color =
+        Math.abs(
+          Array.from(name).reduce((acc, char) => acc + char.charCodeAt(0), 0)
+        ) % palette.length;
+      userColors[name] = palette[color];
     }
     return userColors[name];
   };
