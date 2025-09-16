@@ -11,6 +11,7 @@ export function KonvaDrawing({ isDrawer }: KonvaProps) {
   const [tool, setTool] = React.useState("pen");
   const { connected, lines, sendLine, setLines } = useGameClient(isDrawer);
   const [selectedColor, setSelectedColor] = useState<string>("#563d7c");
+  const [strokeWidth, setStrokeWidth] = useState<number>(5);
 
   const isDrawing = React.useRef(false);
   const currentLine = useRef<{
@@ -36,6 +37,7 @@ export function KonvaDrawing({ isDrawer }: KonvaProps) {
       points: [pos.x, pos.y],
       color: selectedColor,
       newLine: true,
+      strokeWidth,
     };
     currentLine.current = newLine;
     console.log("Sending line:", newLine);
@@ -57,6 +59,7 @@ export function KonvaDrawing({ isDrawer }: KonvaProps) {
         points: currentLine.current.points,
         color: currentLine.current.color,
         newLine: false,
+        strokeWidth: strokeWidth,
       });
     }
   };
@@ -80,7 +83,14 @@ export function KonvaDrawing({ isDrawer }: KonvaProps) {
                   <option value="pen">Pen</option>
                   <option value="eraser">Eraser</option>
                 </select>
-                <input onChange={(e) => setSelectedColor(e.target.value)} />
+                <span>Välj storlek:</span>
+                <input
+                  type="range"
+                  min={1}
+                  max={30}
+                  value={strokeWidth}
+                  onChange={(e) => setStrokeWidth(Number(e.target.value))}
+                />
               </div>
             </>
           )}
@@ -107,13 +117,13 @@ export function KonvaDrawing({ isDrawer }: KonvaProps) {
                 key={i}
                 points={line.points}
                 stroke={line.color}
-                strokeWidth={5}
                 tension={0.5}
                 lineCap="round"
                 lineJoin="round"
                 globalCompositeOperation={
                   line.tool === "eraser" ? "destination-out" : "source-over"
                 }
+                strokeWidth={line.strokeWidth || 5}
               />
             ))}
           </Layer>
