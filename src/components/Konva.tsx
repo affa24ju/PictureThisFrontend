@@ -9,7 +9,7 @@ interface KonvaProps {
 // denna komponent hanterar ritfunktionen med konva biblioteket
 export function KonvaDrawing({ isDrawer }: KonvaProps) {
   const [tool, setTool] = React.useState("pen");
-  const { connected, lines, sendLine, setLines } = useGameClient();
+  const { connected, lines, sendLine, setLines } = useGameClient(isDrawer);
   const [selectedColor, setSelectedColor] = useState<string>("#563d7c");
 
   const isDrawing = React.useRef(false);
