@@ -4,7 +4,7 @@ type ColorPickerProps = {
   onColorChange: (color: string) => void;
 };
 
-export function ColoprPicker({ onColorChange }: ColorPickerProps) {
+export function ColorPicker({ onColorChange }: ColorPickerProps) {
   // här hanteras färgändringarna
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onColorChange(e.target.value);
