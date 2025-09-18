@@ -40,6 +40,10 @@ export function useChatClient(gameMessages: Array<{messageContent: string; userN
             
             subscriptions = [sub1];
             setConnected(true);
+            setMessages((prev)=>[...prev,
+                {messageContent: "Välkommen till Picture This - Spelet alla vill spela! 🎉",
+                    userName:"System"}
+            ])
             console.log("Connected to Chatstomp");
         };
 

@@ -7,7 +7,7 @@ import { useGameState } from "../utils/UseGameState";
 // huvudsidan för spelet, här finns både chatten och ritfunktionen
 export default function GamePage() {
   const gameState = useGameState();
-  const { isDrawer, gameMessages, wordOptions, selectWord, currentWord } = gameState;
+  const { isDrawer, gameMessages, wordOptions, selectWord, currentWord, gameUpdate } = gameState;
   const { messages, sendMessage } = useChatClient(gameMessages);
 
   return (
@@ -19,7 +19,7 @@ export default function GamePage() {
         <ChatMessage messages={messages} sendMessage={sendMessage} />
       </div>
       <div className="flex-1 flex flex-col justify-end items-end pr-8">
-        <KonvaDrawing isDrawer={isDrawer} currentWord={currentWord} />
+        <KonvaDrawing isDrawer={isDrawer} currentWord={currentWord} gameUpdate={gameUpdate} />
       </div>
       {wordOptions && wordOptions.length > 0 && (
         <WordSelection wordOptions={wordOptions} onWordSelect={selectWord} />
