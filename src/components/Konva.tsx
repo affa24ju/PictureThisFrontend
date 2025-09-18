@@ -5,9 +5,11 @@ import { useGameClient } from "../utils/UseLineClient";
 
 interface KonvaProps {
   isDrawer: boolean;
+  currentWord: string | null;
+  gameUpdate: any;
 }
 // denna komponent hanterar ritfunktionen med konva biblioteket
-export function KonvaDrawing({ isDrawer }: KonvaProps) {
+export function KonvaDrawing({ isDrawer, currentWord, gameUpdate }: KonvaProps) {
   const [tool, setTool] = React.useState("pen");
   const { connected, lines, sendLine, setLines } = useGameClient(isDrawer);
   const [selectedColor, setSelectedColor] = useState<string>("#563d7c");
@@ -24,7 +26,7 @@ export function KonvaDrawing({ isDrawer }: KonvaProps) {
   // rensar konvabrädet här istället för i uselineclient
   useEffect(() => {
     setLines([]);
-  }, [isDrawer]);
+  }, [isDrawer, gameUpdate?.event === "NEW_ROUND" ? gameUpdate : null, setLines]);
 
   // denna hanterar när vi trycker ner musknappen
   const handleMouseDown = (e: any) => {
@@ -108,7 +110,7 @@ export function KonvaDrawing({ isDrawer }: KonvaProps) {
         >
           <Layer>
             <Text
-              text={isDrawer ? "Draw something!" : "Live view"}
+              text={isDrawer ? (currentWord || "Draw something!") : "Live view"}
               x={5}
               y={30}
             />
