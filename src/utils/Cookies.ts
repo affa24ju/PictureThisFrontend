@@ -6,7 +6,7 @@ interface TokenPayload {
   sub: string;
   
 }
-
+// skapar en token
 export function getUserIdFromToken(): string {
 
 const token = Cookies.get("currentUser"); // JWT-token
